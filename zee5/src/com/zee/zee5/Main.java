@@ -4,14 +4,21 @@ import com.zee.zee5.dto.Movies;
 import com.zee.zee5.dto.Series;
 import com.zee.zee5.dto.Subscriptions;
 import com.zee.zee5.service.Movie_Service;
+import com.zee.zee5.service.Movie_Service1;
 import com.zee.zee5.service.Series_Service;
+import com.zee.zee5.service.Series_Service1;
 import com.zee.zee5.service.Subscription_Service;
+import com.zee.zee5.service.Subscription_Service1;
+import com.zee.zee5.service.impl.MoviesImpl1;
+import com.zee.zee5.service.impl.SeriesImpl1;
+import com.zee.zee5.service.impl.SubscriptionImpl1;
 
 public class Main {
 	public static void main(String[] args)
 	{
-	Subscription_Service s_service1=Subscription_Service.getInstance();
-	
+//	Subscription_Service s_service1=Subscription_Service.getInstance();
+	Subscription_Service1 s_service1=SubscriptionImpl1.getInstance();
+	System.out.println("SUBSCRIPTION");
 	for(int i=0;i<12;i++)
 	{
 		
@@ -39,7 +46,9 @@ public class Main {
 //		System.out.println(s3);
 //	}
 	
-	Movie_Service ms=Movie_Service.getInstance();
+//	Movie_Service ms=Movie_Service.getInstance();
+	System.out.println("MOVIE");
+	Movie_Service1 ms=MoviesImpl1.getInstance();
 	Movies m=new Movies();
 	m.setId("1");
 	m.setLanguage("English");
@@ -61,12 +70,14 @@ public class Main {
 	System.out.println("movie details"+ value7);
 	String value8 =ms.deleteMovie("2");
 	System.out.println( value8);
-	m.setTrailer("movie link");
+	m.setTrailer("http://www.youtube.com/avengers");
 	Movies value9=ms.updatemoviedetails("1",m);
 	System.out.println("Updated details\n"+value9);
 	
 	//Series
-	Series_Service ss=Series_Service.getInstance();
+	System.out.println("SERIES");
+//	Series_Service ss=Series_Service.getInstance();
+	Series_Service1 ss=SeriesImpl1.getInstance();
 	Series s6=new Series();
 	s6.setSeriesid("1");
 	s6.setName("Friends");
@@ -85,16 +96,23 @@ public class Main {
 	Series[] value14=ss.getallSeries();
 	System.out.println("values");
 	for(Series k:value14)
+		if(k!=null)
 		System.out.println(k);
 	System.out.println(value10);
 	System.out.println(value11);
 	Series value12=ss.updateseriesdetails("1", s6);
 	String[] friendscast= {"chandler","joey","ross"};
 	s6.setCast(friendscast);
-	System.out.println("updatedseries\n"+s7);
-	System.out.println("next");
+	System.out.println("updatedseries\n"+value12);
+	
 	String value13=ss.deleteSeries("Friends");
 	System.out.println(value13);
+	Series[] value15=ss.getallSeries();
+	System.out.println("After deletion");
+	for(Series k:value15)
+		if(k!=null)
+		System.out.println(k);
+	
 	
 }	
 }
