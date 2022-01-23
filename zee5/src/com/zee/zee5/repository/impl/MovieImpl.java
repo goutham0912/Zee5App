@@ -1,10 +1,18 @@
 package com.zee.zee5.repository.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import com.zee.zee5.dto.Movies;
+import com.zee.zee5.exception.LocationNotFound;
+import com.zee.zee5.exception.NameNotFound;
 import com.zee.zee5.repository.MovieInterface;
 
 public class MovieImpl implements MovieInterface {
-	Movies[] movies=new Movies[10];
+	Set<Movies> movies=new HashSet<Movies>();
 	private static int count=-1;
 	private static MovieInterface repo;
 	private MovieImpl()
@@ -23,87 +31,125 @@ public class MovieImpl implements MovieInterface {
 	@Override
 	public String addmovie(Movies m) {
 		// TODO Auto-generated method stub
-		if(count==movies.length-1)
+		boolean result=movies.add(m);
+		if(result)
 		{
-			Movies[] temp=new Movies[movies.length*2];	
-			System.arraycopy(movies, 0, temp, 0, movies.length);
-			movies=temp;
-			movies[++count]=m;
-			return "Added movie";
-			}
-		movies[++count]=m;
-		return "Added movie";
+			return "Movie added successfully";
+		}
+		else {
+			return "Movie not added";
+		}
 	}
 
 	@Override
-	public String deleteMovie(String id) {
+	public String deleteMovie(String name) throws NameNotFound, LocationNotFound {
 		// TODO Auto-generated method stub
-		int c=0;
-		for(Movies s:movies)
+		Optional<Movies> m=getMoviedetails(name);
+		
+		if(m.isPresent())
 		{
-			if(id.equals(s.getId()))
+			System.out.println(m+"-------");
+			boolean result=	movies.remove(m.get());
+			if(result)
+			return "Successfully deleted";
+			else
 			{
-				for(int i=c;i<movies.length-2;i++)
-				{
-					movies[i]=movies[i+1];
-					
-				}
-				movies[movies.length-1]=null;
+			 return "Movie Deletion Failed";
+			}
+		}
+		else {
+			 throw new NameNotFound("Name Not Found");
+		}
+	}
+
+	@Override
+	public Optional<Movies> getMoviedetails(String name) throws NameNotFound, LocationNotFound {
+		// TODO Auto-generated method stub
+		Movies m=null;
+		for(Movies s:movies)
+		{	
+			System.out.println(s);
+			if(name.equals(s.getMoviename()))
+			{
 				
-				return "Successfully deleted the movie";
+				
+				m=s;
+				break;
+				}
+				
 			}
-			c+=1;
-		}
-		return "ID not found";
+		
+		return Optional.of(Optional.ofNullable(m).orElseThrow(()->new NameNotFound("movie does not exist")));
 	}
 
 	@Override
-	public Movies getMoviedetails(String name) {
+	public String[] getMovieCast(String name) throws NameNotFound, LocationNotFound {
 		// TODO Auto-generated method stub
-		for(Movies s:movies)
+Optional<Movies> m=getMoviedetails(name);
+		
+		if(m.isPresent())
 		{
-			if(s!=null && name.equals(s.getMoviename()))
-			{
-				return s;
-			}
+			
+			
+			return m.get().getCast() ;
+			
+			
 		}
-		return null;
-	}
-
-	@Override
-	public String[] getMovieCast(String moviename) {
-		// TODO Auto-generated method stub
-		for(Movies s:movies)
-		{
-			if(s!=null && moviename.equals(s.getMoviename()))
-			{
-				return s.getCast();
-			}
+		else {
+			 throw new NameNotFound("Name Not Found");
 		}
-		return null;
 	}
 
 	@Override
-	public Movies[] getallMovies() {
+	public List<Movies> getallMovies() {
 		// TODO Auto-generated method stub
-		return movies;
+		return new ArrayList(movies);
 	}
 
 	@Override
-	public Movies updatemoviedetails(String id, Movies s) {
-		// TODO Auto-generated method stub
-		int c=0;
-		for(Movies s1:movies)
+	public Movies updatemoviedetails(String name, Movies s) throws NameNotFound, LocationNotFound {
+Optional<Movies> m=getMoviedetails(name);
+		
+		if(m.isPresent())
 		{
-			if(s1!=null && id.equals(s1.getId()))
-			{
-				movies[c]=s;
-				return movies[c];
-			}
-			c+=1;
+			boolean result=	movies.remove(m.get());
+			movies.add(s);
+			
+			return s;
+			
+			
+		}
+		else {
+			 throw new NameNotFound("Name Not Found");
+		}
+		// TODO Auto-generated method stub
+		
 		
 	}
-		return null;
+	@Override
+	public String watchmovie(String moviename) throws LocationNotFound, NameNotFound {
+		System.out.println(moviename);
+Optional<Movies> m=getMoviedetails(moviename);
+System.out.println(m+"---");
+		if(m.isPresent())
+		{
+			
+			if(m.get().getAllowed_locations().contains("India"))
+			{
+				return "Movie Available";
+			}
+			else
+			{
+				throw new  LocationNotFound("Movie is not available in your location");
+			}
+			
+			
+		}
+		else {
+			 throw new NameNotFound("Name Not Found");
+		}
+		
 	}
+	
 
 }

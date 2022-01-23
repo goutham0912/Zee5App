@@ -1,6 +1,10 @@
 package com.zee.zee5.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.zee.zee5.dto.Series;
+import com.zee.zee5.exception.NameNotFound;
 import com.zee.zee5.repository.SeriesInterface;
 import com.zee.zee5.repository.impl.SeriesImpl;
 import com.zee.zee5.service.Series_Service1;
@@ -30,25 +34,25 @@ public class SeriesImpl1 implements Series_Service1 {
 	}
 
 	@Override
-	public String deleteSeries(String id) {
+	public String deleteSeries(String id) throws NameNotFound {
 		// TODO Auto-generated method stub
 		return service1.deleteSeries(id);
 	}
 
 	@Override
-	public Series getSeriesdetails(String id) {
+	public Optional<Series> getSeriesdetails(String id) throws NameNotFound {
 		// TODO Auto-generated method stub
 		return service1.getSeriesdetails(id);
 	}
 
 	@Override
-	public Series[] getallSeries() {
+	public List<Series> getallSeries() {
 		// TODO Auto-generated method stub
 		return service1.getallSeries();
 	}
 
 	@Override
-	public Series updateseriesdetails(String id, Series s) {
+	public Series updateseriesdetails(String id, Series s) throws NameNotFound {
 		// TODO Auto-generated method stub
 		return service1.updateseriesdetails(id, s);
 	}

@@ -1,11 +1,17 @@
 package com.zee.zee5.repository.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.zee.zee5.dto.Subscriptions;
+import com.zee.zee5.dto.Subscriptions;
+import com.zee.zee5.exception.NameNotFound;
 import com.zee.zee5.repository.SubscriptionInterface;
 import com.zee.zee5.repository.Subscription_Repo;
 
 public class SubscriptionImpl implements SubscriptionInterface {
-	Subscriptions[] subscription=new Subscriptions[10];
+	ArrayList<Subscriptions> subscription=new ArrayList<Subscriptions>();
 	private static int count=-1;
 	private static SubscriptionInterface repo;
 	private SubscriptionImpl() {
@@ -23,75 +29,76 @@ public class SubscriptionImpl implements SubscriptionInterface {
 	@Override
 	public String addSubscription(Subscriptions s) {
 		// TODO Auto-generated method stub
-		if(count==subscription.length-1)
+		boolean result=subscription.add(s);
+		if(result)
 		{
-			Subscriptions[] temp=new Subscriptions[subscription.length*2];	
-			System.arraycopy(subscription, 0, temp, 0, subscription.length);
-			subscription=temp;
-			subscription[++count]=s;
-			return "Success";
-			}
-		subscription[++count]=s;
-		return "Success";
+			return "Subscription added successfully";
+		}
+		else {
+			return "subscription not added";
+		}
 	}
 
 	@Override
-	public String deleteSubscription(String id) {
+	public String deleteSubscription(String id) throws NameNotFound {
 		// TODO Auto-generated method stub
-		int c=0;
+Optional<Subscriptions> m=getSubscription(id);
+		
+		if(m.isPresent())
+		{
+			boolean result=	subscription.remove(m.get());
+			if(result)
+			return "Successfully deleted";
+			else
+			{
+			 return "Subscription Deletion Failed";
+			}
+		}
+		else {
+			 throw new NameNotFound("Name Not Found");
+		}
+	}
+
+	@Override
+	public Optional<Subscriptions> getSubscription(String id) throws NameNotFound {
+		// TODO Auto-generated method stub
+		Subscriptions m=null;
 		for(Subscriptions s:subscription)
 		{
 			if(id.equals(s.getId()))
 			{
-				for(int i=c;i<subscription.length-2;i++)
-				{
-					subscription[i]=subscription[i+1];
-					
-				}
-				subscription[subscription.length-1]=null;
-				
-				return "Successfully deleted1";
-			}
-			c+=1;
-		}
-		return "ID not found";
-	}
-
-	@Override
-	public Subscriptions getSubscription(String id) {
-		// TODO Auto-generated method stub
-		for(Subscriptions s:subscription)
-		{
-			if(s!=null && id.equals(s.getId()))
-			{
-				return s;
+				m=s;
+				break;
 			}
 		}
-		return null;
+		return Optional.of(Optional.ofNullable(m).orElseThrow(()->new NameNotFound("Subscription does not exist")));
 		
 	}
 
 	@Override
-	public Subscriptions[] getallSubscription() {
+	public List<Subscriptions> getallSubscription() {
 		// TODO Auto-generated method stub
 		return subscription;
 	}
 
 	@Override
-	public Subscriptions updatesubscription(String id, Subscriptions s) {
+	public Subscriptions updatesubscription(String id, Subscriptions s) throws NameNotFound {
 		// TODO Auto-generated method stub
-		int c=0;
-		for(Subscriptions s1:subscription)
-		{
-			if(s1!=null && id.equals(s1.getId()))
-			{
-				subscription[c]=s;
-				return subscription[c];
-			}
-			c+=1;
+Optional<Subscriptions> m=getSubscription(id);
 		
-	}
-		return null;
+		if(m.isPresent())
+		{
+			boolean result=	subscription.remove(m.get());
+			subscription.add(s);
+			
+			return s;
+			
+			
+		}
+		else {
+			 throw new NameNotFound("Name Not Found");
+		}
+		// TODO Auto-generated method stub
 	}
 
 }

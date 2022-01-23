@@ -1,5 +1,7 @@
 package com.zee.zee5.dto;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -12,4 +14,5 @@ public class Movies {
 	private String cast[];
 	private String length;
 	private String id;
+	private List<String> allowed_locations;
 }
