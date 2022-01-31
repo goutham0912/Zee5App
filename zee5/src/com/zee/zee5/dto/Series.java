@@ -9,6 +9,7 @@ public class Series implements Comparable<Series> {
 	private int no_seasons;
 	private String cast[];
 	private String episodenames[];
+	private String no_episodes;
 	@Override
 	public int compareTo(Series o) {
 		// TODO Auto-generated method stub
